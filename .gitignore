@@ -27,4 +27,6 @@ build/Release
 node_modules
 
 # IDE generated files
+*.idea
 .idea
+idea
