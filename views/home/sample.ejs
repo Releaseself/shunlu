@@ -1,0 +1,144 @@
+<html>
+<head>
+    <title>Sample Page</title>
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
+    <script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <style type="text/css">
+        #frame-top {
+            border-bottom: solid 1px #eee;
+            padding: 15px;
+            margin-bottom: 5px;;
+        }
+
+        #frame-top #step-control {
+            margin: 15px 5px;
+        }
+
+        #step-control .line {
+            background-color: gray;
+        }
+
+        #step-control .cover {
+            background-color: red;
+        }
+
+        #step-control .point {
+            background-color: gray;
+        }
+
+        #step-control .active {
+            background-color: red;
+            border: 10px solid #ccc;
+        }
+
+        #step-control .done {
+            background-color: darkred;
+        }
+
+        #frame-left {
+            border-right: solid 1px #eee;
+            padding: 15px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="container" id="frame-top">
+        <div id="step-control" data-stepCount="7" data-currentStep="2" data-doneSteps="3" data-lineHeight="15"
+             data-pointHeight="30">
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3" id="frame-left">
+                <p>Left Frame</p>
+            </div>
+            <div class="col-sm-9" id="frame-right">
+                <p>Right Frame</p>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+                var control = $('#step-control');
+                var stepCount = parseInt(control.attr('data-stepCount'));
+                var currentStep = parseInt(control.attr('data-currentStep'));
+                var doneSteps = parseInt(control.attr('data-doneSteps'));
+                var lineHeight = parseInt(control.attr('data-lineHeight'));
+                var pointHeight = parseInt(control.attr('data-pointHeight'));
+                var lineWidth = 100 / (stepCount - 1);
+                var light = 10;
+                var layerHeight = pointHeight + light * 2;
+
+                control.css('position', 'relative');
+
+                // add blocks
+                for (var i = 0; i < stepCount - 1; ++i) {
+                    control.append("<div style='display:inline-block;width:" + lineWidth + "%;height:" + layerHeight + "px;position:relative;'></div>");
+                }
+
+                control.append("<div style='display:inline-block;height:" + layerHeight + "px;position:absolute;left:100%;'></div>");
+
+                $('#step-control div').each(function (index, item) {
+                            // add line
+                            var line = "<div style='position:absolute;width:100%;height:" + lineHeight + "px;top:" + (layerHeight - lineHeight) / 2 + "px;' ";
+                            line += index <= currentStep ? "class='line cover'" : "class = 'line'";
+                            line += "></div>";
+                            $(item).append(line);
+
+                            // add point
+                            var point = "<div style='border-radius:50%;position:absolute;";
+
+                            if (index == currentStep) {
+                                point += "height:" + layerHeight + "px;width:" + layerHeight + "px;top:0px;left:-" + layerHeight / 2 + "px;' ";
+                            } else {
+                                point += "height:" + pointHeight + "px;width:" + pointHeight + "px;top:" + (layerHeight - pointHeight) / 2 + "px;left:-" + (layerHeight - pointHeight) / 2 + "px;' ";
+                            }
+
+                            point += "class='point";
+                            if (index < doneSteps) {
+                                point += " done";
+                            }
+                            if (index == currentStep) {
+                                point += " active";
+                            }
+
+                            point += "'></div>";
+
+                            $(item).append(point);
+                        }
+                )
+
+                // add event
+                var points = $('#step-control .point');
+                points.each(function (index, item) {
+                    $(item).click(function () {
+                        if (index >= doneSteps) {
+                            return;
+                        }
+
+                        for (var i = 0; i < points.length; ++i) {
+                            if (index == i && !$(points[i]).hasClass('active')) {
+                                $(points[i]).addClass('active');
+                                $(points[i]).css('width', layerHeight + 'px');
+                                $(points[i]).css('height', layerHeight + 'px');
+                                $(points[i]).css('top', '0px');
+                                $(points[i]).css('left', "-" + layerHeight / 2 + "px");
+                            } else {
+                                $(points[i]).removeClass('active');
+                                $(points[i]).css('width', pointHeight + 'px');
+                                $(points[i]).css('height', pointHeight + 'px');
+                                $(points[i]).css('top', (layerHeight - pointHeight) / 2 + 'px');
+                                $(points[i]).css('left', "-" + (layerHeight - pointHeight) / 2 + "px");
+                            }
+                        }
+                    })
+                })
+            }
+    );
+</script>
+</body>
+</html>
